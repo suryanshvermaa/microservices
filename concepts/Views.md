@@ -118,6 +118,7 @@ The decoupled nature of microservices fosters agility and technological evolutio
 # The Tech Architect's View: Core Architectural Decisions
 
 ![Tech Architect's View](./images/LencesOfView/ta1.png)
+
 From the Tech Architect's perspective, designing a robust, scalable, and adaptable system involves a series of deliberate technical decisions. This document outlines the core strategies chosen for our platform's programming languages, data persistence models, communication patterns, and cloud infrastructure.
 
 ## 1. Polyglot Strategy: Using the Right Tool for the Job
