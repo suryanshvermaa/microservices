@@ -1,6 +1,7 @@
 import { Router } from "express";
+import snippetRouter from "./snippet.routes";
 const router = Router();
 
-router.use("/api/v1", );
+router.use("/snippet", snippetRouter);
 
 export default router;
