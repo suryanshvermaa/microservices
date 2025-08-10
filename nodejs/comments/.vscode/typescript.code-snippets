@@ -1,0 +1,29 @@
+{
+	"express-controller": {
+		"prefix": ["con", "controller"],
+		"body": [
+			"/**",
+			"* @description Create a new user",
+			"* @route POST /api/v1/users",
+			"* @access Public",
+			"* @param {Request} req",
+			"* @param {Response} res",
+			"*/",
+			"export const ${1:createUser} = asyncHandler(async (req: Request, res: Response) => {",
+			"   ${2}",
+			"});",
+		],
+		"description": "express-controller",
+	},
+	"router": {
+		"body": [
+			"import { Router } from \"express\";",
+			"import { createUser } from \"../controllers/user.controller\";",
+			"const ${1:user}Router = Router();",
+			"",
+			"${1:user}Router.get(\"/\", ${2});",
+			"",
+			"export default ${1:user}Router;",
+		],
+	},
+}
