@@ -20,6 +20,16 @@ export const createSnippet = asyncHandler(async (req: Request, res: Response) =>
    }
    body.id=id;
    snippet.push(body);
-   console.log(snippet)
    response(res,200,"Snippet created successfully",body);
+});
+
+/**
+* @description Get All snippets
+* @route POST /api/v1/snippet
+* @access Public
+* @param {Request} req
+* @param {Response} res
+*/
+export const getSnippet = asyncHandler(async (req: Request, res: Response) => {
+   response(res,200,"Snippet fetched successfully",snippet);
 });
