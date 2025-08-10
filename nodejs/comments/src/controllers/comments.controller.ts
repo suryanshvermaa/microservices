@@ -14,7 +14,7 @@ import { AppError } from "../utils/error";
 export const createComment = asyncHandler(
 	async (req: Request, res: Response) => {
 		const id = Date.now().toString();
-		const body: IComment = req.body as any;
+		const body: IComment = req.body as unknown as IComment;
 		body.id = id;
 		comments.push(body);
 		response(res, 200, "success", body);
