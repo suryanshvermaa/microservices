@@ -15,7 +15,7 @@ import response from "../utils/response";
 export const createSnippet = asyncHandler(
 	async (req: Request, res: Response) => {
 		const id = randomBytes(4).toString("hex");
-		const body: ISnippet = req.body as any;
+		const body: ISnippet = req.body as unknown as ISnippet;
 		if (!body.title || !body.description || !body.code || !body.userId) {
 			throw new AppError("All fields are required", 400);
 		}
