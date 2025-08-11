@@ -18,4 +18,10 @@ func main() {
 	if err != nil {
 		log.Fatal(err)
 	}
+
+	s, err := NewGraphQlServer(cfg.AccountUrl, cfg.CatalogUrl, cfg.OrderUrl)
+	if err != nil {
+		log.Fatal(err)
+	}
+	// http.Handle("/graphql",handler.New(s.))
 }

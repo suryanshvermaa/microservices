@@ -1,23 +1,53 @@
 package main
 
+import "github.com/99designs/gqlgen/graphql"
+
 type Server struct {
-	accountClient
-	catalogClient
-	orderClient
+	// accountClient *account.Client
+	// catalogClient *catalog.Client
+	// orderClient   *order.Client
 }
 
-func NewGraphQlServer(accountUrl string) {
+// func NewGraphQlServer(accountUrl string, catalogUrl string, orderUrl string) (*Server, error) {
+// 	accountClient, err := account.NewClient(accountUrl)
+// 	if err != nil {
+// 		return nil, err
+// }
 
-}
+// 	catalogClient, err := catalog.NewClient()
+// 	if err != nil {
+// 		accountClient.Close()
+// 		return nil, err
+// 	}
 
-func (s *Server) Mutation() MutationResolver {
-	return &mutationResolver{
-		server: s,
-	}
-}
+// 	orderClient, err := order.NewClient()
+// 	if err != nil {
+// 		accountClient.Close()
+// 		catalogClient.Close()
+// 		return nil, err
+// 	}
+// 	return &Server{
+// 		accountClient: accountClient,
+// 		catalogClient: catalogClient,
+// 		orderClient:   orderClient,
+// 	}, nil
+// }
 
-func (s *Server) Query() QueryResolver {
-	return &queryResolver{
-		server: s,
-	}
+// func (s *Server) Mutation() MutationResolver {
+// 	return &mutationResolver{
+// 		server: s,
+// 	}
+// }
+
+// func (s *Server) Query() QueryResolver {
+// 	return &queryResolver{
+// 		server: s,
+// 	}
+// }
+
+func (s *Server) ToExecuteSchema() graphql.ExecutableSchema {
+	return NewExecutableSchema(
+		Config{
+			Resolvers: s,
+		})
 }
