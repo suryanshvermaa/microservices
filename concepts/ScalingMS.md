@@ -4,7 +4,8 @@ Scaling an event-driven system involves more than just adding servers. It requir
 ## 1. Architectural Patterns for Scale
 Before diving into specific techniques, two high-level architectural patterns are crucial for building a scalable system.
 
-### The Hybrid Communication Model (Sync & Async)
+## The Hybrid Communication Model (Sync & Async)
+![asynchronous vs synchronous communication](./images/ScalingMS/sm3.png)
 ![asynchronous vs synchronous communication](./images/ScalingMS/sm4.png)
 
 A common question is whether a system based on asynchronous streams still needs synchronous APIs. The answer is yes. A healthy, scalable system often uses a hybrid model:
