@@ -2,7 +2,7 @@ schema: schema.graphql
 
 models:
   Account:
-    model: github.com/suryanshvermaa/microservices/services/graphql.Account
+    model: github.com/suryanshvermaa/microservices/golang/services/graphql.Account
     fields:
       orders:
         resolver: true
