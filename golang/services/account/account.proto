@@ -1,5 +1,7 @@
 syntax = "proto3";
 
+option go_package = "./pb";
+
 package pb;
 
 message Account{
@@ -29,11 +31,11 @@ message GetAccountsRequest{
 }
 
 message GetAccountsResponse{
-    repeated Account account=1
+    repeated Account account=1;
 }
 
 service AccountService{
-    rpc PostAccount(PostAccountRequest) returns PostAccountResponse{}
-    rpc GetAccount(GetAccountRequest) returns GetAccountResponse{}
-    rpc GetAccounts(GetAccountsRequest) returns GetAccountsResponse{}
+    rpc PostAccount(PostAccountRequest) returns (PostAccountResponse);
+    rpc GetAccount(GetAccountRequest) returns (GetAccountResponse);
+    rpc GetAccounts(GetAccountsRequest) returns (GetAccountsResponse);
 }
