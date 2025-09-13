@@ -103,7 +103,10 @@ The project follows a distributed microservices architecture with the following 
 - **Nodemon**: Development server with auto-reload
 
 ## 🚀 Getting Started
-
+### Protobuf generate command
+```
+protoc --go_out=. --go-grpc_out=. --proto_path=.  *.proto
+```
 ### Prerequisites
 - Go 1.24.2 or higher
 - Node.js 18 or higher
