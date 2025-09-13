@@ -1,6 +1,7 @@
 package catalog
 
 import (
+	"context"
 	"fmt"
 	"net"
 
@@ -23,4 +24,17 @@ func ListenGRPC(s Service, port int) error {
 	pb.RegisterCatalogServiceServer(srv, &grpcServer{service: s})
 	reflection.Register(srv)
 	return srv.Serve(lis)
+}
+
+func (s *grpcServer) PostProduct(ctx context.Context, r *pb.PostProductRequest) (*pb.PostProductResponse, error) {
+	p, err := s.service.PostProduct(ctx, r.Name, r.Description, r.Price)
+	if err != nil {
+		return nil, err
+	}
+	return &pb.PostProductResponse{Product: &pb.Product{
+		Id:          p.ID,
+		Name:        p.Name,
+		Description: p.Description,
+		Price:       p.Price,
+	}}, nil
 }
