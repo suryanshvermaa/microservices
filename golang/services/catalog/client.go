@@ -1,6 +1,8 @@
 package catalog
 
 import (
+	"context"
+
 	"github.com/suryanshvermaa/microservices/golang/services/catalog/pb"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/credentials/insecure"
@@ -20,5 +22,29 @@ func NewClient(url string) (*Client, error) {
 	return &Client{
 		conn:    conn,
 		service: c,
+	}, nil
+}
+
+func (c *Client) Close() {
+	c.conn.Close()
+}
+
+func (c *Client) PostProduct(ctx context.Context, name, description string, price float64) (*Product, error) {
+	r, err := c.service.PostProduct(
+		ctx,
+		&pb.PostProductRequest{
+			Name:        name,
+			Description: description,
+			Price:       price,
+		},
+	)
+	if err != nil {
+		return nil, err
+	}
+	return &Product{
+		ID:          r.Product.Id,
+		Name:        r.Product.Name,
+		Description: r.Product.Description,
+		Price:       r.Product.Price,
 	}, nil
 }
