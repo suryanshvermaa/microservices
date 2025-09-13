@@ -66,3 +66,28 @@ func (c *Client) GetProduct(ctx context.Context, id string) (*Product, error) {
 		Price:       r.Product.Price,
 	}, nil
 }
+
+func (c *Client) GetProducts(ctx context.Context, skip uint64, take uint64, ids []string, query string) ([]*Product, error) {
+	r, err := c.service.GetProducts(
+		ctx,
+		&pb.GetProductsRequest{
+			Skip:  skip,
+			Take:  take,
+			Ids:   ids,
+			Query: query,
+		},
+	)
+	if err != nil {
+		return nil, err
+	}
+	products := make([]*Product, len(r.Products))
+	for i, p := range r.Products {
+		products[i] = &Product{
+			ID:          p.Id,
+			Name:        p.Name,
+			Description: p.Description,
+			Price:       p.Price,
+		}
+	}
+	return products, nil
+}
