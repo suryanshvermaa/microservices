@@ -48,3 +48,21 @@ func (c *Client) PostProduct(ctx context.Context, name, description string, pric
 		Price:       r.Product.Price,
 	}, nil
 }
+
+func (c *Client) GetProduct(ctx context.Context, id string) (*Product, error) {
+	r, err := c.service.GetProduct(
+		ctx,
+		&pb.GetProductRequest{
+			Id: id,
+		},
+	)
+	if err != nil {
+		return nil, err
+	}
+	return &Product{
+		ID:          r.Product.Id,
+		Name:        r.Product.Name,
+		Description: r.Product.Description,
+		Price:       r.Product.Price,
+	}, nil
+}
