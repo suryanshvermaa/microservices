@@ -4,6 +4,7 @@ import (
 	"context"
 
 	"github.com/elastic/go-elasticsearch/v9"
+	"github.com/elastic/go-elasticsearch/v9/esutil"
 )
 
 type Repository interface {
@@ -38,11 +39,22 @@ func NewElasticRepository(url string) (Repository, error) {
 }
 
 func (r *elasticRepository) Close() {
-
+	r.client.
 }
 
 func (r *elasticRepository) PutProduct(ctx context.Context, p Product) error {
-
+	doc := productDocument{
+		Name:        p.Name,
+		Description: p.Description,
+		Price:       p.Price,
+	}
+	_, err := r.client.Index(
+		"catalog",
+		esutil.NewJSONReader(&doc),
+		r.client.Index.WithDocumentID(p.ID),
+		r.client.Index.WithContext(ctx),
+	)
+	return err
 }
 
 func (r *elasticRepository) GetProductByID(ctx context.Context, id string) (*Product, error) {
