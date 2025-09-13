@@ -38,3 +38,16 @@ func (s *grpcServer) PostProduct(ctx context.Context, r *pb.PostProductRequest) 
 		Price:       p.Price,
 	}}, nil
 }
+
+func (s *grpcServer) GetProduct(ctx context.Context, r *pb.GetProductRequest) (*pb.GetProductResponse, error) {
+	p, err := s.service.GetProductByID(ctx, r.Id)
+	if err != nil {
+		return nil, err
+	}
+	return &pb.GetProductResponse{Product: &pb.Product{
+		Id:          p.ID,
+		Name:        p.Name,
+		Description: p.Description,
+		Price:       p.Price,
+	}}, nil
+}
