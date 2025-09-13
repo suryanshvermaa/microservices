@@ -7,7 +7,7 @@ import (
 )
 
 type Service interface {
-	PostProducts(ctx context.Context, name, description string, price float64) (*Product, error)
+	PostProduct(ctx context.Context, name, description string, price float64) (*Product, error)
 	GetProductByID(ctx context.Context, id string) (*Product, error)
 	ListProducts(ctx context.Context, skip uint64, take uint64) ([]Product, error)
 	ListProductsWithIDs(ctx context.Context, ids []string) ([]Product, error)
@@ -29,7 +29,7 @@ func NewService(r Repository) Service {
 	return &catalogService{repository: r}
 }
 
-func (s *catalogService) PostProducts(ctx context.Context, name, description string, price float64) (*Product, error) {
+func (s *catalogService) PostProduct(ctx context.Context, name, description string, price float64) (*Product, error) {
 	p := &Product{
 		Name:        name,
 		Description: description,
