@@ -283,9 +283,10 @@ func (x *GetProductResponse) GetProduct() *Product {
 
 type GetProductsRequest struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
-	Skip          uint64                 `protobuf:"varint,1,opt,name=skip,proto3" json:"skip,omitempty"`
-	Take          uint64                 `protobuf:"varint,2,opt,name=take,proto3" json:"take,omitempty"`
-	Ids           []string               `protobuf:"bytes,3,rep,name=ids,proto3" json:"ids,omitempty"`
+	Query         string                 `protobuf:"bytes,1,opt,name=query,proto3" json:"query,omitempty"`
+	Skip          uint64                 `protobuf:"varint,2,opt,name=skip,proto3" json:"skip,omitempty"`
+	Take          uint64                 `protobuf:"varint,3,opt,name=take,proto3" json:"take,omitempty"`
+	Ids           []string               `protobuf:"bytes,4,rep,name=ids,proto3" json:"ids,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -318,6 +319,13 @@ func (x *GetProductsRequest) ProtoReflect() protoreflect.Message {
 // Deprecated: Use GetProductsRequest.ProtoReflect.Descriptor instead.
 func (*GetProductsRequest) Descriptor() ([]byte, []int) {
 	return file_catalog_proto_rawDescGZIP(), []int{5}
+}
+
+func (x *GetProductsRequest) GetQuery() string {
+	if x != nil {
+		return x.Query
+	}
+	return ""
 }
 
 func (x *GetProductsRequest) GetSkip() uint64 {
@@ -404,11 +412,12 @@ const file_catalog_proto_rawDesc = "" +
 	"\x11GetProductRequest\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\tR\x02id\"8\n" +
 	"\x12GetProductResponse\x12\"\n" +
-	"\aproduct\x18\x01 \x01(\v2\b.ProductR\aproduct\"N\n" +
-	"\x12GetProductsRequest\x12\x12\n" +
-	"\x04skip\x18\x01 \x01(\x04R\x04skip\x12\x12\n" +
-	"\x04take\x18\x02 \x01(\x04R\x04take\x12\x10\n" +
-	"\x03ids\x18\x03 \x03(\tR\x03ids\";\n" +
+	"\aproduct\x18\x01 \x01(\v2\b.ProductR\aproduct\"d\n" +
+	"\x12GetProductsRequest\x12\x14\n" +
+	"\x05query\x18\x01 \x01(\tR\x05query\x12\x12\n" +
+	"\x04skip\x18\x02 \x01(\x04R\x04skip\x12\x12\n" +
+	"\x04take\x18\x03 \x01(\x04R\x04take\x12\x10\n" +
+	"\x03ids\x18\x04 \x03(\tR\x03ids\";\n" +
 	"\x13GetProductsResponse\x12$\n" +
 	"\bproducts\x18\x01 \x03(\v2\b.ProductR\bproducts2\xbb\x01\n" +
 	"\x0eCatalogService\x128\n" +
