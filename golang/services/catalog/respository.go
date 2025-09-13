@@ -24,3 +24,39 @@ type productDocument struct {
 	Description string  `json:"description"`
 	Price       float64 `json:"price"`
 }
+
+func NewElasticRepository(url string) (Repository, error) {
+	client, err := elasticsearch.NewClient(
+		elasticsearch.Config{
+			Addresses: []string{url},
+		},
+	)
+	if err != nil {
+		return nil, err
+	}
+	return &elasticRepository{client: client}, nil
+}
+
+func (r *elasticRepository) Close() {
+
+}
+
+func (r *elasticRepository) PutProduct(ctx context.Context, p Product) error {
+
+}
+
+func (r *elasticRepository) GetProductByID(ctx context.Context, id string) (*Product, error) {
+
+}
+
+func (r *elasticRepository) ListProducts(ctx context.Context, skip uint64, take uint64) ([]Product, error) {
+
+}
+
+func (r *elasticRepository) ListProductsWithIDs(ctx context.Context, ids []string) ([]Product, error) {
+
+}
+
+func (r *elasticRepository) SearchProducts(ctx context.Context, query string, skip uint64, take uint64) ([]Product, error) {
+
+}
