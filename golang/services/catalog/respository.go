@@ -2,6 +2,7 @@ package catalog
 
 import (
 	"context"
+	"encoding/json"
 
 	"github.com/elastic/go-elasticsearch/v9"
 	"github.com/elastic/go-elasticsearch/v9/esutil"
@@ -58,7 +59,33 @@ func (r *elasticRepository) PutProduct(ctx context.Context, p Product) error {
 }
 
 func (r *elasticRepository) GetProductByID(ctx context.Context, id string) (*Product, error) {
+	res, err := r.client.Get(
+		"catalog",
+		id,
+		r.client.Get.WithContext(ctx),
+	)
+	if err != nil {
+		return nil, err
+	}
+	defer res.Body.Close()
 
+	if res.IsError() {
+		return nil, nil // Not found or error
+	}
+
+	var doc struct {
+		Source productDocument `json:"_source"`
+	}
+	if err := json.NewDecoder(res.Body).Decode(&doc); err != nil {
+		return nil, err
+	}
+
+	return &Product{
+		ID:          id,
+		Name:        doc.Source.Name,
+		Description: doc.Source.Description,
+		Price:       doc.Source.Price,
+	}, nil
 }
 
 func (r *elasticRepository) ListProducts(ctx context.Context, skip uint64, take uint64) ([]Product, error) {
