@@ -128,7 +128,46 @@ func (r *elasticRepository) ListProducts(ctx context.Context, skip uint64, take 
 }
 
 func (r *elasticRepository) ListProductsWithIDs(ctx context.Context, ids []string) ([]Product, error) {
+	res, err := r.client.Mget(
+		esutil.NewJSONReader(map[string]interface{}{
+			"ids": ids,
+		}),
+		r.client.Mget.WithIndex("catalog"),
+		r.client.Mget.WithContext(ctx),
+	)
+	if err != nil {
+		return nil, err
+	}
+	defer res.Body.Close()
 
+	if res.IsError() {
+		return nil, nil // Not found or error
+	}
+
+	var rj struct {
+		Docs []struct {
+			ID     string          `json:"_id"`
+			Found  bool            `json:"found"`
+			Source productDocument `json:"_source"`
+		} `json:"docs"`
+	}
+	if err := json.NewDecoder(res.Body).Decode(&rj); err != nil {
+		return nil, err
+	}
+
+	products := make([]Product, 0, len(rj.Docs))
+	for _, doc := range rj.Docs {
+		if doc.Found {
+			products = append(products, Product{
+				ID:          doc.ID,
+				Name:        doc.Source.Name,
+				Description: doc.Source.Description,
+				Price:       doc.Source.Price,
+			})
+		}
+	}
+
+	return products, nil
 }
 
 func (r *elasticRepository) SearchProducts(ctx context.Context, query string, skip uint64, take uint64) ([]Product, error) {
