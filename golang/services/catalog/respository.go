@@ -171,5 +171,50 @@ func (r *elasticRepository) ListProductsWithIDs(ctx context.Context, ids []strin
 }
 
 func (r *elasticRepository) SearchProducts(ctx context.Context, query string, skip uint64, take uint64) ([]Product, error) {
+	res, err := r.client.Search(
+		esutil.NewJSONReader(map[string]interface{}{
+			"query": map[string]interface{}{
+				"multi_match": map[string]interface{}{
+					"query":  query,
+					"fields": []string{"name", "description"},
+				},
+			},
+		}),
+		r.client.Search.WithIndex("catalog"),
+		r.client.Search.WithFrom(int(skip)),
+		r.client.Search.WithSize(int(take)),
+		r.client.Search.WithContext(ctx),
+	)
+	if err != nil {
+		return nil, err
+	}
+	defer res.Body.Close()
 
+	if res.IsError() {
+		return nil, nil // Not found or error
+	}
+
+	var rj struct {
+		Hits struct {
+			Hits []struct {
+				ID     string          `json:"_id"`
+				Source productDocument `json:"_source"`
+			} `json:"hits"`
+		} `json:"hits"`
+	}
+	if err := json.NewDecoder(res.Body).Decode(&rj); err != nil {
+		return nil, err
+	}
+
+	products := make([]Product, len(rj.Hits.Hits))
+	for i, hit := range rj.Hits.Hits {
+		products[i] = Product{
+			ID:          hit.ID,
+			Name:        hit.Source.Name,
+			Description: hit.Source.Description,
+			Price:       hit.Source.Price,
+		}
+	}
+
+	return products, nil
 }
