@@ -40,7 +40,7 @@ func NewElasticRepository(url string) (Repository, error) {
 }
 
 func (r *elasticRepository) Close() {
-	r.client.
+	// elasticsearch.Client does not require explicit close, but implement for interface compatibility
 }
 
 func (r *elasticRepository) PutProduct(ctx context.Context, p Product) error {
@@ -89,7 +89,7 @@ func (r *elasticRepository) GetProductByID(ctx context.Context, id string) (*Pro
 }
 
 func (r *elasticRepository) ListProducts(ctx context.Context, skip uint64, take uint64) ([]Product, error) {
-	res,err:=r.client.Search(
+	res, err := r.client.Search(
 		r.client.Search.WithContext(ctx),
 		r.client.Search.WithIndex("catalog"),
 		r.client.Search.WithFrom(int(skip)),
@@ -99,7 +99,7 @@ func (r *elasticRepository) ListProducts(ctx context.Context, skip uint64, take 
 		return nil, err
 	}
 	defer res.Body.Close()
-	
+
 	if res.IsError() {
 		return nil, nil // Not found or error
 	}
