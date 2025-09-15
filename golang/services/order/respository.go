@@ -26,3 +26,11 @@ func NewPostgresRepository(url string) (Repository, error) {
 	}
 	return &postgresRepository{db}
 }
+
+func (r *postgresRepository) Close() {
+	r.db.Close()
+}
+
+func (r *postgresRepository) PutOrder(ctx context.Context, o Order) error {
+
+}
