@@ -172,14 +172,14 @@ func (r *elasticRepository) ListProductsWithIDs(ctx context.Context, ids []strin
 
 func (r *elasticRepository) SearchProducts(ctx context.Context, query string, skip uint64, take uint64) ([]Product, error) {
 	res, err := r.client.Search(
-		esutil.NewJSONReader(map[string]interface{}{
+		r.client.Search.WithBody(esutil.NewJSONReader(map[string]interface{}{
 			"query": map[string]interface{}{
 				"multi_match": map[string]interface{}{
 					"query":  query,
 					"fields": []string{"name", "description"},
 				},
 			},
-		}),
+		})),
 		r.client.Search.WithIndex("catalog"),
 		r.client.Search.WithFrom(int(skip)),
 		r.client.Search.WithSize(int(take)),
