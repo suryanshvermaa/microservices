@@ -20,7 +20,7 @@ func NewPostgresRepository(url string) (Repository, error) {
 	if err != nil {
 		return nil, err
 	}
-	err = db.ping()
+	err = db.Ping()
 	if err != nil {
 		return nil, err
 	}
