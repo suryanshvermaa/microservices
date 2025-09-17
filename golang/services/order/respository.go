@@ -62,6 +62,9 @@ func (r *postgresRepository) PutOrder(ctx context.Context, o Order) (err error) 
 	}
 	for _, p := range o.Products {
 		_, err = stmt.ExecContext(ctx, o.ID, p.ID, p.Quantity)
+		if err != nil {
+			return err
+		}
 	}
 	stmt.ExecContext(ctx)
 	if err != nil {
