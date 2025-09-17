@@ -9,7 +9,7 @@ import (
 
 type Repository interface {
 	Close()
-	PutOrder(ctx context.Context, o Order) error
+	PutOrder(ctx context.Context, o Order) (err error)
 	GetOrdersForAccount(ctx context.Context, accountID string) ([]Order, error)
 }
 
@@ -26,7 +26,7 @@ func NewPostgresRepository(url string) (Repository, error) {
 	if err != nil {
 		return nil, err
 	}
-	return &postgresRepository{db: db}
+	return &postgresRepository{db: db}, nil
 }
 
 func (r *postgresRepository) Close() {
