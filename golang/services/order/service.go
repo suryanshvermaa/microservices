@@ -56,5 +56,5 @@ func (s *orderService) PostOrder(ctx context.Context, accountID string, products
 }
 
 func (s *orderService) GetOrdersForAccount(ctx context.Context, accountID string) ([]Order, error) {
-
+	return s.repository.GetOrdersForAccount(ctx, accountID)
 }
