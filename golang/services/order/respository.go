@@ -56,7 +56,10 @@ func (r *postgresRepository) PutOrder(ctx context.Context, o Order) (err error) 
 	if err != nil {
 		return err
 	}
-	stmt, _ := tx.PrepareContext(ctx, pq.CopyIn("ordered_products", "order_id", "product_id", "quantity"))
+	stmt, err := tx.PrepareContext(ctx, pq.CopyIn("ordered_products", "order_id", "product_id", "quantity"))
+	if err != nil {
+		return err
+	}
 	for _, p := range o.Products {
 		_, err = stmt.ExecContext(ctx, o.ID, p.ID, p.Quantity)
 	}
