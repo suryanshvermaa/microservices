@@ -8,7 +8,7 @@ import (
 )
 
 type Service interface {
-	PostOrder(ctx context.Context, accountID string, products []OrderedProduct) error
+	PostOrder(ctx context.Context, accountID string, products []OrderedProduct) (*Order, error)
 	GetOrdersForAccount(ctx context.Context, accountID string) ([]Order, error)
 }
 
@@ -36,7 +36,7 @@ func NewService(r Repository) Service {
 	return &orderService{repository: r}
 }
 
-func (s *orderService) PostOrder(ctx context.Context, accountID string, products []OrderedProduct) error {
+func (s *orderService) PostOrder(ctx context.Context, accountID string, products []OrderedProduct) (*Order, error) {
 	o := Order{
 		ID:        ksuid.New().String(),
 		CreatedAt: time.Now().UTC(),
@@ -48,7 +48,11 @@ func (s *orderService) PostOrder(ctx context.Context, accountID string, products
 		total += p.Price * float64(p.Quantity)
 	}
 	o.TotalPrice = total
-	return s.repository.PutOrder(ctx, o)
+	err := s.repository.PutOrder(ctx, o)
+	if err != nil {
+		return nil, err
+	}
+	return &o, nil
 }
 
 func (s *orderService) GetOrdersForAccount(ctx context.Context, accountID string) ([]Order, error) {
