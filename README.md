@@ -104,9 +104,9 @@ Production-ready system I built to understand distributed microservices:
         ┌─────────────────────┼─────────────────────┐
         │                     │                     │
 ┌───────▼───────┐    ┌────────▼────────┐    ┌──────▼───────┐
-│ My Account     │    │ My Catalog      │    │ My Order     │
-│ Service        │    │ Service         │    │ Service      │
-│ (Port 8080)    │    │ (Port 8080)     │    │ (Port 8080)  │
+│ My Account    │    │ My Catalog      │    │ My Order     │
+│ Service       │    │ Service         │    │ Service      │
+│ (Port 8080)   │    │ (Port 8080)     │    │ (Port 8080)  │
 └───────┬───────┘    └────────┬────────┘    └──────┬───────┘
         │                     │                    │
 ┌───────▼───────┐    ┌────────▼────────┐    ┌──────▼───────┐
