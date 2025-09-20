@@ -133,9 +133,9 @@ Modern web application I created to explore TypeScript microservices:
         ┌─────────────────────┼─────────────────────┐
         │                     │                     │
 ┌───────▼───────┐    ┌────────▼────────┐    ┌──────▼───────┐
-│ My Snippet     │    │ My Comments     │    │ My Future    │
-│ Service        │    │ Service         │    │ Services     │
-│ (Port 3000)    │    │ (Port 3001)     │    │              │
+│ My Snippet    │    │ My Comments     │    │ My Future    │
+│ Service       │    │ Service         │    │ Services     │
+│ (Port 3000)   │    │ (Port 3001)     │    │              │
 └───────┬───────┘    └────────┬────────┘    └──────────────┘
         │                     │
 ┌───────▼───────┐    ┌────────▼────────┐
