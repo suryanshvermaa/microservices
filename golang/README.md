@@ -249,11 +249,18 @@ go mod tidy
 ```
 
 2. **Generate Protocol Buffers**:
+- Ensure `protoc` and Go plugins are installed:
+- `protoc-gen-go` and `protoc-gen-go-grpc`
+```bash
+# Install protoc (if not already installed)
+go install google.golang.org/protobuf/cmd/protoc-gen-go@latest
+go install google.golang.org/grpc/cmd/protoc-gen-go-grpc@latest
+```
 ```bash
 # For each service, regenerate protobuf files
-protoc --go_out=./services/account --go-grpc_out=. services/account/account.proto
-protoc --go_out=./services/catalog --go-grpc_out=. services/catalog/catalog.proto
-protoc --go_out=./services/order --go-grpc_out=. services/order/order.proto
+protoc --go_out=./services/account --go-grpc_out=./services/account services/account/account.proto
+protoc --go_out=./services/catalog --go-grpc_out=./services/catalog services/catalog/catalog.proto
+protoc --go_out=./services/order --go-grpc_out=./services/order services/order/order.proto
 ```
 
 3. **Generate GraphQL Code**:
