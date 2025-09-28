@@ -1,6 +1,15 @@
 version: "3"
 services:
   account:
+    build:
+      context: .
+      dockerfile: ../services/account/app.dockerfile
+    depends_on:
+      - account_db
+    environment:
+      - DATABASE_URL=postgres://suryansh:123456@account_db/suryansh?sslmode=disable
+    restart: on_failure
+
   catalog:
   order:
   graphql:
