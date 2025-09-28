@@ -21,6 +21,17 @@ services:
     restart: on_failure
 
   order:
+    build:
+      context: .
+      dockerfile: ./services/order/app.dockerfile
+    depends_on:
+      - order_db
+    environment:
+      - DATABASE_URL=postgres://suryansh:123456@order_db/suryansh?sslmode=disable
+      - ACCOUNT_SERVICE_URL=account:8080
+      - CATALOG_SERVICE_URL=catalog:8080
+    restart: on_failure
+
   graphql:
   account_db:
   catalog_db:
