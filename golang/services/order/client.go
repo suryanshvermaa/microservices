@@ -60,4 +60,34 @@ func (c *Client) PostOrder(ctx context.Context, accountId string, products []Ord
 	}, nil
 }
 
-func (c *Client) GetOrdersForAccount()
+func (c *Client) GetOrdersForAccount(ctx context.Context, accountID string) ([]Order, error) {
+	r, err := c.service.GetOrdersForAccount(ctx, &pb.GetOrdersForAccountRequest{
+		AccountId: accountID,
+	})
+	if err != nil {
+		return nil, err
+	}
+	orders := []Order{}
+	for _, orderProto := range r.Orders {
+		newOrder := Order{
+			ID:         orderProto.Id,
+			TotalPrice: orderProto.TotalPrice,
+			AccountID:  orderProto.AccountId,
+		}
+		newOrder.CreatedAt = time.Time{}
+		newOrder.CreatedAt.UnmarshalBinary(orderProto.CreatedAt)
+		products := []OrderedProduct{}
+		for _, p := range orderProto.Products {
+			products = append(products, OrderedProduct{
+				ID:          p.Id,
+				Quantity:    p.Quantity,
+				Name:        p.Name,
+				Description: p.Description,
+				Price:       p.Price,
+			})
+		}
+		newOrder.Products = products
+		orders = append(orders, newOrder)
+	}
+	return orders, nil
+}
