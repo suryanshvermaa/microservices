@@ -7,25 +7,26 @@ A modern microservices-based e-commerce platform built with Go, gRPC, GraphQL, P
 The system consists of four main microservices:
 
 - **Account Service**: User account management with PostgreSQL storage
-- **Catalog Service**: Product catalog with Elasticsearch for search capabilities
+- **Catalog Service**: Product catalog with Elasticsearch for search capabilities  
 - **Order Service**: Order processing and management with PostgreSQL storage
 - **GraphQL Gateway**: Unified API gateway that aggregates data from all services
 
 ```
                 ┌─────────────────────┐
                 │   GraphQL API       │
-                │      Gateway        │
+                │    Gateway :8000    │
                 └─────────┬───────────┘
                           │
         ┌─────────────────┼─────────────────┐
         │                 │                 │
 ┌───────▼───────┐ ┌───────▼───────┐ ┌──────▼───────┐
 │ Account       │ │ Catalog       │ │ Order        │
-│ Service       │ │ Service       │ │ Service      │
+│ Service :8080 │ │ Service :8080 │ │ Service :8080│
 └───────┬───────┘ └───────┬───────┘ └──────┬───────┘
         │                 │                │
 ┌───────▼───────┐ ┌───────▼───────┐ ┌──────▼───────┐
 │ PostgreSQL DB │ │ Elasticsearch │ │ PostgreSQL DB│
+│ (account_db)  │ │ (catalog_db)  │ │ (order_db)   │
 └───────────────┘ └───────────────┘ └──────────────┘
 ```
 
@@ -105,9 +106,9 @@ docker-compose up -d
 
 This will start:
 - PostgreSQL databases for Account and Order services
-- Elasticsearch for Catalog service  
-- All microservices
-- GraphQL gateway
+- Elasticsearch (v8.15.0) for Catalog service  
+- All microservices (account, catalog, order)
+- GraphQL gateway (accessible on port 8000)
 
 ### 3. Verify Services
 Check that all services are running:
@@ -115,10 +116,16 @@ Check that all services are running:
 docker-compose ps
 ```
 
+### 4. Test the GraphQL Gateway
+Access the GraphQL playground: `http://localhost:8000/playground`
+
 ## 📡 API Usage
 
 ### GraphQL Endpoint
-The GraphQL gateway provides a unified API at: `http://localhost:8080/graphql`
+The GraphQL gateway provides a unified API at: `http://localhost:8000/graphql`
+
+### GraphQL Playground
+Access the interactive GraphQL playground at: `http://localhost:8000/playground`
 
 ### Sample Queries
 
@@ -209,6 +216,7 @@ The project includes Dockerfiles for each service:
 ## 🗄️ Database Schema
 
 ### Account Service (PostgreSQL)
+Database: `account_db` with user `suryansh`
 ```sql
 CREATE TABLE accounts(
     id CHAR(27) PRIMARY KEY,
@@ -216,7 +224,8 @@ CREATE TABLE accounts(
 );
 ```
 
-### Order Service (PostgreSQL)
+### Order Service (PostgreSQL)  
+Database: `order_db` with user `suryansh`
 ```sql
 CREATE TABLE orders(
     id CHAR(27) PRIMARY KEY,
@@ -225,7 +234,7 @@ CREATE TABLE orders(
     total_price MONEY NOT NULL
 );
 
-CREATE TABLE order_products(
+CREATE TABLE ordered_products(
     order_id CHAR(27) REFERENCES orders (id) ON DELETE CASCADE,
     product_id CHAR(27),
     quantity INT NOT NULL,
@@ -234,12 +243,18 @@ CREATE TABLE order_products(
 ```
 
 ### Catalog Service (Elasticsearch)
+Elasticsearch version: 8.15.0
 Products are stored as documents with fields:
 - `name` (string)
 - `description` (string)  
 - `price` (float)
 
 ## 🔧 Development
+
+### Recent Updates
+- **Fixed**: Tautological condition error in order repository (`respository.go` line 137)
+- **Updated**: Docker-compose configuration with proper service networking
+- **Improved**: Database connection configuration and error handling
 
 ### Building Services Locally
 
@@ -288,10 +303,21 @@ go run services/graphql/main.go
 
 Each service can be configured via environment variables:
 
+#### Account Service
+- `DATABASE_URL` - PostgreSQL connection string (default: `postgres://suryansh:123456@account_db/suryansh?sslmode=disable`)
+
+#### Catalog Service  
+- `DATABASE_URL` - Elasticsearch endpoint (default: `http://catalog_db:9200`)
+
+#### Order Service
+- `DATABASE_URL` - PostgreSQL connection string (default: `postgres://suryansh:123456@order_db/suryansh?sslmode=disable`)
+- `ACCOUNT_SERVICE_URL` - Account service gRPC endpoint (default: `account:8080`)
+- `CATALOG_SERVICE_URL` - Catalog service gRPC endpoint (default: `catalog:8080`)
+
 #### GraphQL Gateway
-- `ACCOUNT_SERVICE_URL` - Account service gRPC endpoint
-- `CATALOG_SERVICE_URL` - Catalog service gRPC endpoint  
-- `ORDER_SERVICE_URL` - Order service gRPC endpoint
+- `ACCOUNT_SERVICE_URL` - Account service gRPC endpoint (default: `account:8080`)
+- `CATALOG_SERVICE_URL` - Catalog service gRPC endpoint (default: `catalog:8080`)  
+- `ORDER_SERVICE_URL` - Order service gRPC endpoint (default: `order:8080`)
 
 ## 🧪 Testing
 
@@ -304,7 +330,7 @@ You can test the GraphQL API using:
 
 Example curl request:
 ```bash
-curl -X POST http://localhost:8080/graphql \
+curl -X POST http://localhost:8000/graphql \
   -H "Content-Type: application/json" \
   -d '{"query": "{ accounts(pagination: {skip: 0, take: 5}) { id name } }"}'
 ```
@@ -321,7 +347,7 @@ curl -X POST http://localhost:8080/graphql \
     ├── account/               # Account microservice
     │   ├── account.proto      # gRPC service definition
     │   ├── service.go         # Business logic
-    │   ├── repository.go      # Data access layer
+    │   ├── respository.go     # Data access layer
     │   ├── server.go          # gRPC server
     │   ├── client.go          # gRPC client
     │   ├── up.sql            # Database schema
@@ -332,7 +358,7 @@ curl -X POST http://localhost:8080/graphql \
     ├── catalog/              # Catalog microservice
     │   ├── catalog.proto     # gRPC service definition
     │   ├── service.go        # Business logic
-    │   ├── repository.go     # Elasticsearch integration
+    │   ├── respository.go    # Elasticsearch integration
     │   ├── server.go         # gRPC server
     │   ├── client.go         # gRPC client
     │   ├── app.dockerfile    # Service container
@@ -341,7 +367,7 @@ curl -X POST http://localhost:8080/graphql \
     ├── order/                # Order microservice
     │   ├── order.proto       # gRPC service definition
     │   ├── service.go        # Business logic
-    │   ├── repository.go     # Data access layer
+    │   ├── respository.go    # Data access layer
     │   ├── server.go         # gRPC server
     │   ├── client.go         # gRPC client
     │   ├── up.sql           # Database schema
@@ -382,11 +408,15 @@ This project is licensed under the MIT License - see the LICENSE file for detail
 
 ## 🐛 Known Issues
 
-- GraphQL gateway implementation is incomplete (some resolver functions are commented out)
-- Missing error handling in some service methods
+- GraphQL gateway implementation may have incomplete resolver functions  
+- Missing authentication/authorization system
 - Database connection pooling not optimized for production
-- No authentication/authorization implemented
 - Missing comprehensive logging and monitoring
+- Error handling could be improved in some service methods
+
+### Recently Fixed Issues
+- ✅ **Fixed**: Tautological condition error in order repository (September 2025)
+- ✅ **Fixed**: Docker build configuration for GraphQL gateway
 
 ## 🚀 Future Enhancements
 
