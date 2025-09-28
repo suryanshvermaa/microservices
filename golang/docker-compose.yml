@@ -1,4 +1,4 @@
-version: "3"
+version: "3.8"
 services:
   account:
     build:
@@ -8,7 +8,7 @@ services:
       - account_db
     environment:
       - DATABASE_URL=postgres://suryansh:123456@account_db/suryansh?sslmode=disable
-    restart: on_failure
+    restart: on-failure
 
   catalog:
     build:
@@ -18,7 +18,7 @@ services:
       - catalog_db
     environment:
       - DATABASE_URL=http://catalog_db:9200
-    restart: on_failure
+    restart: on-failure
 
   order:
     build:
@@ -30,7 +30,7 @@ services:
       - DATABASE_URL=postgres://suryansh:123456@order_db/suryansh?sslmode=disable
       - ACCOUNT_SERVICE_URL=account:8080
       - CATALOG_SERVICE_URL=catalog:8080
-    restart: on_failure
+    restart: on-failure
 
   graphql:
     build:
@@ -46,7 +46,7 @@ services:
       - ACCOUNT_SERVICE_URL=account:8080
       - CATALOG_SERVICE_URL=catalog:8080
       - ORDER_SERVICE_URL=order:8080
-    restart: on_failure
+    restart: on-failure
 
   account_db:
     build:
@@ -55,7 +55,7 @@ services:
     environment:
       - POSTGRES_USER=suryansh
       - POSTGRES_PASSWORD=123456
-      - POSTGRES_DB=account_db
+      - POSTGRES_DB=suryansh
     restart: unless-stopped
   
   catalog_db:
@@ -70,6 +70,6 @@ services:
     environment:
       - POSTGRES_USER=suryansh
       - POSTGRES_PASSWORD=123456
-      - POSTGRES_DB=order_db
+      - POSTGRES_DB=suryansh
     restart: unless-stopped
   

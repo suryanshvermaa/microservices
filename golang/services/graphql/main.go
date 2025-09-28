@@ -26,7 +26,7 @@ func main() {
 		log.Fatal(err)
 	}
 	http.Handle("/graphql", handler.GraphQL(s.ToExecutableSchema()))
-	http.Handle("/playground", handler.Playground("akhil", "/graphql"))
+	http.Handle("/playground", handler.Playground("suryansh", "/graphql"))
 
 	log.Fatal(http.ListenAndServe(":8080", nil))
 }
