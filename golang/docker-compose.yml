@@ -47,8 +47,29 @@ services:
       - CATALOG_SERVICE_URL=catalog:8080
       - ORDER_SERVICE_URL=order:8080
     restart: on_failure
-    
+
   account_db:
+    build:
+      context: .
+      dockerfile: ./services/account/db.dockerfile
+    environment:
+      - POSTGRES_USER=suryansh
+      - POSTGRES_PASSWORD=123456
+      - POSTGRES_DB=account_db
+    restart: unless-stopped
+  
   catalog_db:
+    image: docker.elastic.co/elasticsearch/elasticsearch:8.15.0
+    environment:
+      - ES_JAVA_OPTS=-Xms1g -Xmx1g
+      - discovery.type=single-node
   order_db:
+    build:
+      context: .
+      dockerfile: ./services/order/db.dockerfile
+    environment:
+      - POSTGRES_USER=suryansh
+      - POSTGRES_PASSWORD=123456
+      - POSTGRES_DB=order_db
+    restart: unless-stopped
   
