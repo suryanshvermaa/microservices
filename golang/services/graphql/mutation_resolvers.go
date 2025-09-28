@@ -1,19 +1,79 @@
-// package main
+package main
 
-// import "context"
+import (
+	"context"
+	"errors"
+	"log"
+	"time"
 
-// type mutationResolver struct {
-// 	server *Server
-// }
+	"github.com/suryanshvermaa/microservices/golang/services/order"
+)
 
-// func (r *mutationResolver) createAccount(ctx context.Context, in AccountInput) (*Account, error) {
+var (
+	ErrorInvalidParameter = errors.New("invalid parameter")
+)
 
-// }
+type mutationResolver struct {
+	server *Server
+}
 
-// func (r *mutationResolver) createProduct(ctx context.Context, in ProductInput) (*Account, error) {
+func (r *mutationResolver) createAccount(ctx context.Context, in AccountInput) (*Account, error) {
+	ctx, cancel := context.WithTimeout(ctx, 3*time.Second)
+	defer cancel()
 
-// }
+	a, err := r.server.accountClient.PostAccount(ctx, in.Name)
+	if err != nil {
+		log.Println(err)
+		return nil, err
+	}
 
-// func (r *mutationResolver) createOrder(ctx context.Context, in OrderInput) (*Account, error) {
+	return &Account{
+		ID:   a.ID,
+		Name: a.Name,
+	}, nil
+}
 
-// }
+func (r *mutationResolver) createProduct(ctx context.Context, in ProductInput) (*Product, error) {
+	ctx, cancel := context.WithTimeout(ctx, 3*time.Second)
+	defer cancel()
+
+	p, err := r.server.catalogClient.PostProduct(ctx, in.Name, in.Description, in.Price)
+	if err != nil {
+		log.Println(err)
+		return nil, err
+	}
+
+	return &Product{
+		ID:          p.ID,
+		Name:        p.Name,
+		Description: p.Description,
+		Price:       p.Price,
+	}, nil
+}
+
+func (r *mutationResolver) createOrder(ctx context.Context, in OrderInput) (*Order, error) {
+	ctx, cancel := context.WithTimeout(ctx, 3*time.Second)
+	defer cancel()
+
+	var products []order.OrderedProduct
+	for _, p := range in.Products {
+		if p.Quantity <= 0 {
+			return nil, ErrorInvalidParameter
+		}
+		products = append(products, order.OrderedProduct{
+			ID:       p.ID,
+			Quantity: uint32(p.Quantity),
+		})
+	}
+	o, err := r.server.orderClient.PostOrder(ctx, in.AccountID, products)
+	if err != nil {
+		log.Println(err)
+		return nil, err
+	}
+
+	return &Order{
+		ID:         o.ID,
+		CreatedAt:  o.CreatedAt,
+		TotalPrice: o.TotalPrice,
+	}, nil
+}
