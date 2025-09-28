@@ -17,7 +17,7 @@ type mutationResolver struct {
 	server *Server
 }
 
-func (r *mutationResolver) createAccount(ctx context.Context, in AccountInput) (*Account, error) {
+func (r *mutationResolver) CreateAccount(ctx context.Context, in *AccountInput) (*Account, error) {
 	ctx, cancel := context.WithTimeout(ctx, 3*time.Second)
 	defer cancel()
 
@@ -33,7 +33,7 @@ func (r *mutationResolver) createAccount(ctx context.Context, in AccountInput) (
 	}, nil
 }
 
-func (r *mutationResolver) createProduct(ctx context.Context, in ProductInput) (*Product, error) {
+func (r *mutationResolver) CreateProduct(ctx context.Context, in *ProductInput) (*Product, error) {
 	ctx, cancel := context.WithTimeout(ctx, 3*time.Second)
 	defer cancel()
 
@@ -51,7 +51,7 @@ func (r *mutationResolver) createProduct(ctx context.Context, in ProductInput) (
 	}, nil
 }
 
-func (r *mutationResolver) createOrder(ctx context.Context, in OrderInput) (*Order, error) {
+func (r *mutationResolver) CreateOrder(ctx context.Context, in *OrderInput) (*Order, error) {
 	ctx, cancel := context.WithTimeout(ctx, 3*time.Second)
 	defer cancel()
 
