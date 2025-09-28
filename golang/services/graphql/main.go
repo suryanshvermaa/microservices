@@ -2,14 +2,16 @@ package main
 
 import (
 	"log"
+	"net/http"
 
+	"github.com/99designs/gqlgen/handler"
 	"github.com/kelseyhightower/envconfig"
 )
 
 type AppConfig struct {
-	AccountUrl string `envConfig:"ACCOUNT_SERVICE_URL"`
-	CatalogUrl string `envConfig:"CATALOG_SERVICE_URL"`
-	OrderUrl   string `envCofig:"ORDER_SERVICE_URL"`
+	AccountUrl string `envconfig:"ACCOUNT_SERVICE_URL"`
+	CatalogUrl string `envconfig:"CATALOG_SERVICE_URL"`
+	OrderUrl   string `envconfig:"ORDER_SERVICE_URL"`
 }
 
 func main() {
@@ -19,9 +21,12 @@ func main() {
 		log.Fatal(err)
 	}
 
-	s, err := NewGraphQlServer(cfg.AccountUrl, cfg.CatalogUrl, cfg.OrderUrl)
+	s, err := NewGraphQLServer(cfg.AccountUrl, cfg.CatalogUrl, cfg.OrderUrl)
 	if err != nil {
 		log.Fatal(err)
 	}
-	// http.Handle("/graphql",handler.New(s.))
+	http.Handle("/graphql", handler.GraphQL(s.ToExecutableSchema()))
+	http.Handle("/playground", handler.Playground("suryansh", "/graphql"))
+
+	log.Fatal(http.ListenAndServe(":8080", nil))
 }
