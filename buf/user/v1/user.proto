@@ -1,0 +1,11 @@
+syntax = "proto3";
+
+package user.v1;
+
+option go_package = "github.com/suryanshvermaa/microservices/buf/user/v1;userpb";
+
+message User {
+    string uuid=1;
+    string full_name=2;
+    int64 birth_year=3;
+}
